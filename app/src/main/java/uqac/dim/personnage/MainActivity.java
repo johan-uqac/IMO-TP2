@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         modificationCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Log.i("MainActivity", "onCheckedChanged: " + b);
                 characterName.setEnabled(b);
                 characterHP.setEnabled(b);
                 characterCA.setEnabled(b);
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         EditText characterCA = findViewById(R.id.character_ca);
         EditText characterDMG = findViewById(R.id.character_dmg);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("Personnage" + currentCharacter.getClasse(), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(R.string.app_name + currentCharacter.getClasse(), Context.MODE_PRIVATE);
         String name = sharedPreferences.getString("name", "");
         String hp = sharedPreferences.getString("hp", "5");
         String ca = sharedPreferences.getString("ca", "5");
@@ -120,9 +119,6 @@ public class MainActivity extends AppCompatActivity {
             ((Mage) currentCharacter).setPM(Integer.parseInt(pm));
         }
 
-        Log.i("loading class", "Personnage" + currentCharacter.getClasse());
-        Log.i("loading", "loadCharacter: " + name + " " + hp + " " + ca + " " + dmg + " " + pm);
-
         characterName.setText(name);
         characterHP.setText(hp);
         characterCA.setText(ca);
@@ -133,6 +129,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public static boolean isInteger(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     public void saveCharacter(View v) {
         EditText characterName = findViewById(R.id.character_name);
         EditText characterHP = findViewById(R.id.character_hp);
@@ -140,7 +145,41 @@ public class MainActivity extends AppCompatActivity {
         EditText characterDMG = findViewById(R.id.character_dmg);
         EditText characterMagicPoints = findViewById(R.id.character_magic_points);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("Personnage" + currentCharacter.getClasse(), Context.MODE_PRIVATE);
+        String name = characterName.getText().toString();
+        boolean error = false;
+        if (name.isEmpty()) {
+            characterName.setError(getString(R.string.name_error));
+            error = true;
+        }
+
+        String hp = characterHP.getText().toString();
+        if (hp.isEmpty() || !isInteger(hp)) {
+            characterHP.setError(getString(R.string.hp_error));
+            error = true;
+        }
+        String ca = characterCA.getText().toString();
+        if (ca.isEmpty() || !isInteger(ca)) {
+            characterCA.setError(getString(R.string.ca_error));
+            error = true;
+        }
+        String dmg = characterDMG.getText().toString();
+        if (dmg.isEmpty() || !isInteger(dmg)) {
+            characterDMG.setError(getString(R.string.damage_error));
+            error = true;
+        }
+        String pm = "";
+        if (currentCharacter instanceof Mage) {
+            pm = characterMagicPoints.getText().toString();
+            if (pm.isEmpty() || !isInteger(pm)) {
+                characterMagicPoints.setError(getString(R.string.magic_points_error));
+                error = true;
+            }
+        }
+        if (error) {
+            return;
+        }
+
+        SharedPreferences sharedPreferences = getSharedPreferences(R.string.app_name + currentCharacter.getClasse(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("name", characterName.getText().toString());
         editor.putString("hp", characterHP.getText().toString());
@@ -150,12 +189,6 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("pm", characterMagicPoints.getText().toString());
         }
         editor.apply();
-        Log.i("SelectedCharacterClass", currentCharacter.getClasse());
-        Log.i("SelectedCharacterName", characterName.getText().toString());
-        Log.i("SelectedCharacterPv", characterHP.getText().toString());
-        Log.i("SelectedCharacterCa", characterCA.getText().toString());
-        Log.i("SelectedCharacterDMG", characterDMG.getText().toString());
-        Log.i("Editor", editor.toString());
     }
 
     public void newCharacter(View v) {

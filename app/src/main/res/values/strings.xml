@@ -19,4 +19,9 @@
     <string name="character_damage">DMG du personnage</string>
     <string name="magic_points">Points de magie</string>
     <string name="character_magic_points">Points de magie du personnage</string>
+    <string name="name_error">Le nom du personnage est obligatoire</string>
+    <string name="hp_error">Les PV du personnage sont obligatoires</string>
+    <string name="ca_error">Le CA du personnage est obligatoire</string>
+    <string name="damage_error">Les DMG du personnage sont obligatoires</string>
+    <string name="magic_points_error">Les points de magie du personnage sont obligatoires</string>
 </resources>
